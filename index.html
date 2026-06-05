@@ -3,62 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Message</title>
+    <title>Infinity Loop</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000; font-family: sans-serif;
             overflow: hidden; display: flex; justify-content: center; align-items: center;
-            user-select: none;
+            user-select: none; cursor: pointer;
         }
 
-        /* 실제 윈도우 에러창 스타일 */
-        #actual-alert {
-            width: 420px; background: #f0f0f0; border: 1px solid #707070;
-            box-shadow: 3px 3px 10px rgba(0,0,0,0.3); display: block; z-index: 999;
+        #hint-text {
+            color: #555; font-size: 20px; font-weight: bold;
+            letter-spacing: 2px; transition: opacity 0.2s;
         }
-        .title-bar {
-            background: linear-gradient(to bottom, #ffffff, #e1e1e1);
-            padding: 6px 10px; display: flex; justify-content: space-between; align-items: center;
-            font-size: 12px; color: #333; border-bottom: 1px solid #cccccc;
-        }
-        .close-x {
-            width: 16px; height: 16px; text-align: center; line-height: 14px;
-            font-family: sans-serif; font-size: 11px; color: #555; cursor: pointer;
-        }
-        .close-x:hover { background-color: #e81123; color: white; }
-        .alert-content {
-            padding: 20px; display: flex; align-items: flex-start; gap: 15px;
-            background: #ffffff; font-size: 14px; color: #000; line-height: 1.4;
-        }
-        .error-icon {
-            width: 32px; height: 32px; background: #e81123; border-radius: 50%;
-            color: white; font-weight: bold; font-size: 22px; text-align: center; line-height: 32px;
-        }
-        .btn-container {
-            background: #f0f0f0; padding: 12px; text-align: right;
-            border-top: 1px solid #dfdfdf;
-        }
-        #stop-btn {
-            padding: 6px 24px; background: #e1e1e1; border: 1px solid #adadad;
-            font-size: 13px; cursor: pointer; outline: none; font-weight: bold;
-        }
-        #stop-btn:hover { background: #e5f1fb; border-color: #0078d7; }
 
-        /* 거리 카운트다운 화면 */
-        #status-screen {
-            display: none; text-align: center; color: white; z-index: 5;
-        }
-        #distance-label { font-size: 20px; color: #aaa; letter-spacing: 2px; }
-        #distance { font-size: 90px; font-weight: bold; color: #ff2222; font-family: monospace; }
-        
-        /* 단독 배치되는 핏빛 "뒤를 봐." */
-        #warning-screen {
-            display: none; text-align: center; z-index: 6;
-        }
-        #warning-text { font-size: 70px; color: #ff0000; font-weight: bold; letter-spacing: 5px; }
-
-        /* 귀신 가상 팝업창 */
+        /* 귀신 가상 팝업창 스타일 */
         .ghost-popup {
             position: absolute; width: 280px; height: 260px;
             background: #111; border: 2px solid #ff0000; box-shadow: 0 0 25px rgba(255,0,0,0.8);
@@ -67,165 +26,66 @@
         .ghost-header { background: #ff0000; height: 18px; width: 100%; }
         .ghost-img { width: 100%; height: calc(100% - 18px); object-fit: fill; }
 
-        /* 격렬한 화면 진동 효과 */
+        /* 극한의 화면 진동 무한 지속 */
         @keyframes hardcore-shake {
-            0% { transform: translate(3px, 5px) rotate(0deg); }
-            10% { transform: translate(-5px, -3px) rotate(-2deg); }
-            20% { transform: translate(-8px, 0px) rotate(2deg); }
-            30% { transform: translate(0px, 6px) rotate(0deg); }
-            40% { transform: translate(4px, -4px) rotate(3deg); }
-            50% { transform: translate(-3px, 5px) rotate(-2deg); }
-            60% { transform: translate(-7px, 2px) rotate(0deg); }
-            70% { transform: translate(5px, 3px) rotate(-3deg); }
-            80% { transform: translate(-2px, -4px) rotate(2deg); }
-            90% { transform: translate(6px, 6px) rotate(0deg); }
-            100% { transform: translate(2px, -5px) rotate(-1deg); }
+            0% { transform: translate(4px, 6px) rotate(0deg); }
+            10% { transform: translate(-6px, -4px) rotate(-2deg); }
+            20% { transform: translate(-9px, 0px) rotate(2deg); }
+            30% { transform: translate(0px, 7px) rotate(0deg); }
+            40% { transform: translate(5px, -5px) rotate(3deg); }
+            50% { transform: translate(-4px, 6px) rotate(-2deg); }
+            60% { transform: translate(-8px, 3px) rotate(0deg); }
+            70% { transform: translate(6px, 4px) rotate(-3deg); }
+            80% { transform: translate(-3px, -5px) rotate(2deg); }
+            90% { transform: translate(7px, 7px) rotate(0deg); }
+            100% { transform: translate(3px, -6px) rotate(-1deg); }
         }
-        .shaking { animation: hardcore-shake 0.15s infinite; }
+        .shaking { animation: hardcore-shake 0.1s infinite; }
     </style>
 </head>
 <body>
 
-    <audio id="km-bgm" src="0605.mp4" preload="auto" crossorigin="anonymous"></audio>
-
-    <div id="actual-alert">
-        <div class="title-bar">
-            <span>System Warning</span>
-            <div class="close-x">✕</div>
-        </div>
-        <div class="alert-content">
-            <div class="error-icon">✕</div>
-            <div>
-                <strong>보안 경고</strong><br>
-                당신의 위치 정보가 외부 사이트로 전송되었습니다.
-            </div>
-        </div>
-        <div class="btn-container">
-            <button id="stop-btn">전송 중지</button>
-        </div>
-    </div>
-
-    <div id="status-screen">
-        <div id="distance-label">DISTANCE</div>
-        <div id="distance">300 km</div>
-    </div>
-
-    <div id="warning-screen">
-        <div id="warning-text">뒤를 봐.</div>
-    </div>
+    <div id="hint-text">화면을 클릭하세요</div>
 
     <script>
-        const stopBtn = document.getElementById('stop-btn');
-        const actualAlert = document.getElementById('actual-alert');
-        const statusScreen = document.getElementById('status-screen');
-        const warningScreen = document.getElementById('warning-screen');
-        const distanceEl = document.getElementById('distance');
-        const kmBgm = document.getElementById('km-bgm');
+        const hintText = document.getElementById('hint-text');
+        let isTriggered = false;
 
-        // [웹 서버 정책 대응] 경고창 마우스 클릭 시 오디오 객체 미리 활성화 잠금해제
-        actualAlert.addEventListener('mousedown', () => {
-            kmBgm.load();
-        });
+        document.body.addEventListener('click', () => {
+            if (isTriggered) return;
+            isTriggered = true;
 
-        // 전송 중지 버튼 작동
-        stopBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+            hintText.style.opacity = '0';
 
-            // 1. UI 전환을 오디오 재생보다 먼저 무조건 실행!! (전환 씹힘 원천 차단)
-            actualAlert.style.display = 'none';
-            statusScreen.style.display = 'block';
-
-            // 2. 오디오 강제 재생 트랙 가동
-            kmBgm.currentTime = 0;
-            kmBgm.play().then(() => {
-                console.log("BGM 재생 성공슨");
-            }).catch(err => {
-                // 정책 오류 예외 처리 시에도 인터벌은 계속 굴러가도록 세팅
-                console.log("오디오 스트리밍 우회 재생");
-            });
-
-            let currentKm = 300;
-            const duration = 20000; // 보내준 0605.mp4 오디오 타임 (20초)
-            const intervalTime = 30;
-            let elapsedTime = 0;
-
-            const countdown = setInterval(() => {
-                elapsedTime += intervalTime;
-
-                // 0605 비트가 후반부로 갈수록 고조되는 텐션에 맞춰 지수 가속도 매칭!!
-                let progress = elapsedTime / duration;
-                let speedFactor = Math.pow(progress, 2.5); // 가속도 배율 업그레이드
-                currentKm = 300 - (300 * speedFactor);
-
-                if (elapsedTime >= duration || currentKm <= 0) {
-                    currentKm = 0;
-                    clearInterval(countdown);
-
-                    // 음악 칼같이 정지
-                    kmBgm.pause();
-                    kmBgm.currentTime = 0;
-
-                    // 거리 UI 완전 증발 후 단독으로 핏빛 "뒤를 봐." 박아버리기
-                    statusScreen.style.display = 'none';
-                    warningScreen.style.display = 'block';
-
-                    // 딱 3초 딜레이 준 뒤 귀신 50개 폭격 개시긔
-                    setTimeout(triggerJumpScare, 3000);
-                } else {
-                    distanceEl.textContent = Math.floor(currentKm) + " km";
-                }
-            }, intervalTime);
-        });
-
-        function triggerJumpScare() {
-            // 깃허브 호스팅 상태에서 전체 화면 요청 보안 우회 실행
+            // 전체 화면 강제 전환
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen();
             } else if (document.documentElement.webkitRequestFullscreen) {
                 document.documentElement.webkitRequestFullscreen();
             }
 
-            warningScreen.style.display = 'none';
+            // 진동 효과 무한 켜기
             document.body.classList.add('shaking');
-
-            let popupCount = 0;
-            const maxPopups = 50;
-
-            // 사진 뜰 때마다 믹싱음 겹치기 타이머 
-            const popupInterval = setInterval(() => {
-                if (popupCount >= maxPopups) {
-                    clearInterval(popupInterval);
-
-                    setTimeout(() => {
-                        document.body.classList.remove('shaking');
-                        document.querySelectorAll('.ghost-popup').forEach(el => el.remove());
-                        
-                        if (document.exitFullscreen) document.exitFullscreen();
-                        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-
-                        window.close();
-                        alert("접속이 강제 종료되었습니다.");
-                    }, 2500);
-                    return;
-                }
-
-                playOverlapSound(); // 사진 생성 타이밍에 싱크로 1:1 사운드 중첩 폭발
+            
+            // [제한 없는 무한 루프] 브라우저 메모리가 허용하는 한 멈추지 않고 계속 증식!!
+            setInterval(() => {
+                playOverlapSound(); // 팝업 생성마다 사운드 폭발
                 createGhostPopup();
-                popupCount++;
-            }, 50);
-        }
+            }, 30); // 속도를 0.03초로 더 끌어올려서 다다다다닥 폭격
+        });
 
+        // 독립 오디오 객체 무한 중첩 재생
         function playOverlapSound() {
-            const audioContext = new Audio('bbb.mp4');
+            const audioContext = new Audio('bbb.mp4'); 
             audioContext.volume = 1.0;
             audioContext.play().catch(e => {});
         }
 
+        // 팝업창 좌표 랜덤 무한 생성
         function createGhostPopup() {
             const popup = document.createElement('div');
             popup.className = 'ghost-popup';
-
+            
             const maxX = window.innerWidth - 280;
             const maxY = window.innerHeight - 260;
             popup.style.left = Math.random() * maxX + 'px';
